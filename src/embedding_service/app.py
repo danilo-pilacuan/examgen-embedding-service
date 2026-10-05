@@ -1,11 +1,11 @@
-"""Microservicio de embeddings (OpenAI-compatible /v1/embeddings).
+"""Embedding microservice (OpenAI-compatible /v1/embeddings).
 
-Sirve un modelo de embeddings open-source (sentence-transformers) en un
-contenedor Docker. Expone el endpoint estándar `/v1/embeddings` para que el
-pipeline lo use como si fuera OpenAI, pero corriendo localmente.
+Serves an open-source embedding model (sentence-transformers) in a Docker
+container. Exposes the standard `/v1/embeddings` endpoint so the pipeline
+can use it as if it were OpenAI, but running locally.
 
-La dimensión del vector es la nativa del modelo (ej. 384 para MiniLM,
-1024 para bge-m3). La base de datos se adapta a esta dimensión.
+The vector dimension is the model's native dimension (e.g. 384 for MiniLM,
+1024 for bge-m3). The database adapts to this dimension.
 """
 import os
 import numpy as np
@@ -15,14 +15,14 @@ from sentence_transformers import SentenceTransformer
 
 app = FastAPI(title="Embedding Service")
 
-# Configuración vía variables de entorno
+# Configuration via environment variables
 MODEL_NAME = os.getenv("EMBEDDING_MODEL", "BAAI/bge-m3")
 DEVICE = os.getenv("EMBEDDING_DEVICE", "cpu")
 
-print(f"🔄 Cargando modelo de embeddings: {MODEL_NAME} ...")
+print(f"🔄 Loading embedding model: {MODEL_NAME} ...")
 _model = SentenceTransformer(MODEL_NAME, device=DEVICE)
 NATIVE_DIM = _model.get_sentence_embedding_dimension()
-print(f"✅ Modelo cargado. Dimensión: {NATIVE_DIM}")
+print(f"✅ Model loaded. Dimension: {NATIVE_DIM}")
 
 
 class EmbeddingRequest(BaseModel):
